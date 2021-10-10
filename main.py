@@ -21,10 +21,10 @@ async def on_ready():
   await change_status()
 
 
-# status = itertools.cycle(['Music coming soon!','Status cycling!','online 24/7!'])
+status = itertools.cycle(['Music coming soon!','Status cycling!','online 24/7!'])
 
 @tasks.loop(seconds=20)
 async def change_status():
-  await bot.change_presence(activity=discord.Game("New stuff soon.")
+  await bot.change_presence(activity=discord.Game(next(status))
 
 bot.run(TOKEN)
