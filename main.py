@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord.ext import tasks
 import discord
+import discord.py
 import os
 from dotenv import load_dotenv
 import itertools
