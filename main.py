@@ -12,6 +12,8 @@ TOKEN = os.getenv("TOKEN")
 
 bot = commands.Bot(command_prefix=';')
 
+status = itertools.cycle(['Music coming soon!','Status cycling!','online 24/7!'])
+
 @bot.event
 async def on_ready():
   for guild in bot.guilds:
@@ -19,14 +21,13 @@ async def on_ready():
     f'{bot.user} is connected to the following guild(s):\n'
     f'{guild.name}(id: {guild.id})'
     )
+  await change_status1()
+
+async def change_status1():
+  @tasks.loop(seconds=20)
+  async def change_status():
+    await bot.change_presence(activity=discord.Game(next(status))
+                              
   await change_status()
 
-
-status = itertools.cycle(['Music coming soon!','Status cycling!','online 24/7!'])
-
-@tasks.loop(seconds=20)
-async def change_status():
-  await bot.change_presence(activity=discord.Game(next(status))
-
 bot.run(TOKEN)
-#dontcrash
