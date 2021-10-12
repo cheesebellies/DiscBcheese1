@@ -21,13 +21,11 @@ async def on_ready():
     f'{bot.user} is connected to the following guild(s):\n'
     f'{guild.name}(id: {guild.id})'
     )
-  await change_status1()
-
-async def change_status1():
-  @tasks.loop(seconds=20)
-  async def change_status():
-    await bot.change_presence(activity=discord.Game(next(status))
-                              
   await change_status()
+
+@tasks.loop(seconds=20)
+async def change_status():
+  await bot.change_presence(activity=discord.Game(next(status)))
+                              
 
 bot.run(TOKEN)
