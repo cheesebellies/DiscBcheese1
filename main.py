@@ -5,8 +5,7 @@ import os
 from dotenv import load_dotenv
 import itertools
 import asyncio
-import re, requests, subprocess, urllib.parse, urllib.request, pafy
-from bs4 import BeautifulSoup
+import pafy
 from ytsearch import searchr
 from ytdl import downloader
 from ytdl import deleter
@@ -253,4 +252,4 @@ async def leave(ctx):
 
 
   
-# bot.run(TOKEN) 
+bot.run(TOKEN) 
