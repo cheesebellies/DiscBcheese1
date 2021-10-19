@@ -28,4 +28,5 @@ def downloader(url):
 
 def deleter():
   for filename in os.listdir("/home/runner/discb2/audio/"):
-    os.remove(os.path.join("/home/runner/discb2/audio/",filename))
+    if filename != "textnew.txt":
+      os.remove(os.path.join("/home/runner/discb2/audio/",filename))
