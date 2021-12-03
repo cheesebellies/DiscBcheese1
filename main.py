@@ -60,7 +60,7 @@ async def play(cxt,*args):
   else:
     message = await cxt.send("Invalid input.")
     await asyncio.sleep(5)
-    await message.delete()
+    await delete(message)
     inpvalid = False
   
   if inpvalid == True:
@@ -79,10 +79,10 @@ async def play(cxt,*args):
       try:
         replacemessage = await bot.wait_for("message", check=check, timeout=20)
       except asyncio.TimeoutError:
-        await message.delete()
+        await delete(message)
       else:
-        await replacemessage.delete()
-        await message.delete()
+        await delete(replacemessage)
+        await delete(message)
         if replacemessage.contents.lower() == "y":
           path = downloader(vidurl)
           bot.stop()
@@ -107,7 +107,7 @@ async def search(cxt,*args):
   else:
     message = await cxt.send("Invalid input.")
     await asyncio.sleep(5)
-    await message.delete()
+    await delete(message)
     inpvalid = False
   if inpvalid == True:
     sendstr = f"Top results for {plyinp}:\n"
@@ -124,10 +124,10 @@ async def search(cxt,*args):
     try:
       nmessage = await bot.wait_for("message", check=check, timeout=20)
     except asyncio.TimeoutError:
-      await message.delete()
+      await delete(message)
     else:
-      await nmessage.delete()
-      await message.delete()
+      await delete(nmessage)
+      await delete(message)
 
     vidurl = (sresult[int(nmessage)-1])[1]
     guild = cxt.guild
@@ -142,10 +142,10 @@ async def search(cxt,*args):
       try:
         replacemessage = await bot.wait_for("message", check=check, timeout=20)
       except asyncio.TimeoutError:
-        await message.delete()
+        await delete(message)
       else:
-        await replacemessage.delete()
-        await message.delete()
+        await delete(nmessage)
+        await delete(message)
         if replacemessage.contents.lower() == "y":
           path = downloader(vidurl)
           bot.stop()
@@ -177,12 +177,12 @@ async def queue(cxt,*args):
     elif typ.lower() != "l":
       message = await cxt.send("Invalid input.")
       await asyncio.sleep(5)
-      await message.delete()
+      await delete(message)
       inpvalid = False
   elif typ.lower() != "l":
     message = await cxt.send("Invalid input.")
     await asyncio.sleep(5)
-    await message.delete()
+    await delete(message)
     inpvalid = False
   if inpvalid == True:
     if typ.lower() == "a":
@@ -219,7 +219,7 @@ async def queue(cxt,*args):
       else:
         message = await cxt.send("Queue is empty.")
       await asyncio.sleep(5)
-      await message.delete()
+      await delete(message)
 
     elif typ.lower() == "l":
       f=open("queue.txt")
@@ -232,7 +232,7 @@ async def queue(cxt,*args):
     else:
       message = await cxt.send("Invalid input.")
       await asyncio.sleep(5)
-      await message.delete()
+      await delete(message)
 
 
 
