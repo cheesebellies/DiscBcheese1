@@ -92,9 +92,9 @@ async def play(cxt,*args):
       else:
         if replacemessage.contents.lower() == "y":
           await stop()
-          playa(cxt,vidurl)
+          await playa(cxt,vidurl)
     else:
-      playa(cxt,vidurl)
+      await playa(cxt,vidurl)
       
       
   
@@ -149,9 +149,9 @@ async def search(cxt,*args):
       else:
         if replacemessage.contents.lower() == "y":
           await stop()
-          playa(cxt,vidurl)
+          await playa(cxt,vidurl)
     else:
-      playa(cxt,vidurl)
+      await playa(cxt,vidurl)
       
 
 
