@@ -1,6 +1,6 @@
 from discord.ext import commands
 from discord.ext import tasks
-import discord 
+import discord
 import os
 from dotenv import load_dotenv
 import itertools
@@ -63,6 +63,8 @@ async def play(cxt,*args):
   plyinp = ""
   inpvalid = True
   result = []
+  voice_client = get(bot.voice_clients, guild=cxt.guild)
+
 
   if len(args) != 0:
     for i in args:
@@ -75,7 +77,6 @@ async def play(cxt,*args):
 
     result = searchr(plyinp,1)
     vidurl = result[0][1]
-    voice_client = get(bot.voice_clients, guild=cxt.guild)
 
 
     if voice_client.is_playing() == True:
@@ -105,6 +106,8 @@ async def search(cxt,*args):
   sresult = []
   sendstr = ""
   sendstrint = 0
+  voice_client = get(bot.voice_clients, guild=cxt.guild)
+
 
   if len(args) != 0:
     for i in args:
@@ -131,7 +134,6 @@ async def search(cxt,*args):
     else:
 
       vidurl = (sresult[int(nmessage)-1])[1]
-      voice_client = get(bot.voice_clients, guild=cxt.guild)
 
 
     if voice_client.is_playing() == True:
