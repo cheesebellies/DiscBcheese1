@@ -133,7 +133,7 @@ async def search(cxt,*args):
       await cxt.send("Timed out.")
     else:
 
-      vidurl = (sresult[int(nmessage)-1])[1]
+      vidurl = (sresult[int(nmessage.content)-1])[1]
 
 
     if voice_client.is_playing() == True:
