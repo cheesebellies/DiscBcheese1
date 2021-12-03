@@ -250,6 +250,6 @@ async def leave(ctx):
 
 
 
-#nice
+#noice
   
 bot.run(TOKEN) 
