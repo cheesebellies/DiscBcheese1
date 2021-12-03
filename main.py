@@ -63,9 +63,8 @@ async def play(cxt,*args):
   plyinp = ""
   inpvalid = True
   result = []
-  voice_client = get(bot.voice_clients, guild=cxt.guild)
-
-
+  voice_client = get(ctx.bot.voice_clients, guild=ctx.guild)
+  
   if len(args) != 0:
     for i in args:
       plyinp += i
@@ -106,8 +105,7 @@ async def search(cxt,*args):
   sresult = []
   sendstr = ""
   sendstrint = 0
-  voice_client = get(bot.voice_clients, guild=cxt.guild)
-
+  voice_client = get(ctx.bot.voice_clients, guild=ctx.guild)
 
   if len(args) != 0:
     for i in args:
