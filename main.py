@@ -60,7 +60,7 @@ async def play(cxt,*args):
   else:
     message = await cxt.send("Invalid input.")
     await asyncio.sleep(5)
-    await Message.Message.delete(message)
+    await Message.delete(message)
     inpvalid = False
   
   if inpvalid == True:
