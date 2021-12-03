@@ -4,3 +4,4 @@ discord
 pafy
 youtube-search-python
 youtube-dl
+pynacl
