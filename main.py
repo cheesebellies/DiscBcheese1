@@ -9,6 +9,11 @@ import pafy
 from ytsearch import searchr
 from ytdl import downloader
 from ytdl import deleter
+from discord.utils import get
+from discord import FFmpegPCMAudio
+from discord import TextChannel
+from youtube_dl import YoutubeDL
+
 
 
 load_dotenv()
@@ -38,12 +43,17 @@ async def dchekr():
     deleter()
 
 
-async def playa(cxt,path):
-  guild = cxt.guild
-  voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
-  audio_source = discord.FFmpegPCMAudio(path)
-  if not voice_client.is_playing():
-        voice_client.play(audio_source, after=None)
+async def playa(ctx,url):
+  YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
+  FFMPEG_OPTIONS = {
+        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+
+  voice = get(bot.voice_clients, guild=ctx.guild)
+  with YoutubeDL(YDL_OPTIONS) as ydl:
+        info = ydl.extract_info(url, download=False)
+        URL = info['url']
+        voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+        voice.is_playing()
 
 
 
@@ -58,20 +68,18 @@ async def play(cxt,*args):
     for i in args:
       plyinp += i
   else:
-    message = await cxt.send("Invalid input.")
-    await asyncio.sleep(5)
-    await Message.delete(message)
+    await cxt.send("Invalid input.")
     inpvalid = False
   
   if inpvalid == True:
 
     result = searchr(plyinp,1)
     vidurl = result[0][1]
-    guild = cxt.guild
-    voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
+    voice_client = get(bot.voice_clients, guild=cxt.guild)
+
 
     if voice_client.is_playing() == True:
-      message = await cxt.send("Video already playing. Replace? y/n")
+      await cxt.send("Video already playing. Replace? y/n")
       
       def check(msg):
         return msg.author == cxt.author and msg.channel == cxt.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
@@ -79,16 +87,13 @@ async def play(cxt,*args):
       try:
         replacemessage = await bot.wait_for("message", check=check, timeout=20)
       except asyncio.TimeoutError:
-        await Message.delete(message)
+        await cxt.send("Timed out.")
       else:
-        await Message.delete(replacemessage)
-        await Message.delete(message)
         if replacemessage.contents.lower() == "y":
-          path = downloader(vidurl)
-          bot.stop()
-          playa(cxt,path)
+          await stop()
+          playa(cxt,vidurl)
     else:
-      playa(cxt,path)
+      playa(cxt,vidurl)
       
       
   
@@ -105,9 +110,7 @@ async def search(cxt,*args):
     for i in args:
       plyinp += i
   else:
-    message = await cxt.send("Invalid input.")
-    await asyncio.sleep(5)
-    await Message.delete(message)
+    await cxt.send("Invalid input.")
     inpvalid = False
   if inpvalid == True:
     sendstr = f"Top results for {plyinp}:\n"
@@ -124,17 +127,15 @@ async def search(cxt,*args):
     try:
       nmessage = await bot.wait_for("message", check=check, timeout=20)
     except asyncio.TimeoutError:
-      await Message.delete(message)
+      await cxt.send("Timed out.")
     else:
-      await Message.delete(nmessage)
-      await Message.delete(message)
 
-    vidurl = (sresult[int(nmessage)-1])[1]
-    guild = cxt.guild
-    voice_client: discord.VoiceClient = discord.utils.get(bot.voice_clients, guild=guild)
+      vidurl = (sresult[int(nmessage)-1])[1]
+      voice_client = get(bot.voice_clients, guild=cxt.guild)
+
 
     if voice_client.is_playing() == True:
-      message = await cxt.send("Video already playing. Replace? y/n")
+      await cxt.send("Video already playing. Replace? y/n")
       
       def check(msg):
         return msg.author == cxt.author and msg.channel == cxt.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
@@ -142,114 +143,133 @@ async def search(cxt,*args):
       try:
         replacemessage = await bot.wait_for("message", check=check, timeout=20)
       except asyncio.TimeoutError:
-        await Message.delete(message)
+        await cxt.send("Timed out.")
       else:
-        await Message.delete(nmessage)
-        await Message.delete(message)
         if replacemessage.contents.lower() == "y":
-          path = downloader(vidurl)
-          bot.stop()
-          playa(cxt,path)
+          await stop()
+          playa(cxt,vidurl)
     else:
-      playa(cxt,path)
+      playa(cxt,vidurl)
       
 
 
   
-@bot.command(name="queue",help="Adds, removes, and plays songs in a queue. P stands for play, which plays the queue from the start, A stands for add, L stands for list.  Usage: -queue (p, a, r) (song name if applicable)  Example: -queue a NCS Candyland")
-async def queue(cxt,*args):
-  inpvalid = True
-  inp = ""
-  sresult = []
-  name1 = ""
-  url1 = ""
-  num1 = 0
-  qlen = 0
-  tru1 = True
-  sendstr = ""
-  qnum = 0
+# @bot.command(name="queue",help="Adds, removes, and plays songs in a queue. P stands for play, which plays the queue from the start, A stands for add, L stands for list.  Usage: -queue (p, a, r) (song name if applicable)  Example: -queue a NCS Candyland")
+# async def queue(cxt,*args):
+#   inpvalid = True
+#   inp = ""
+#   sresult = []
+#   name1 = ""
+#   url1 = ""
+#   num1 = 0
+#   qlen = 0
+#   tru1 = True
+#   sendstr = ""
+#   qnum = 0
 
-  if len(args) != 0:
-    typ = args[0]
-    if len(args) >1:
-      for i in args[0:]:
-        inp += i
-    elif typ.lower() != "l":
-      message = await cxt.send("Invalid input.")
-      await asyncio.sleep(5)
-      await Message.delete(message)
-      inpvalid = False
-  elif typ.lower() != "l":
-    message = await cxt.send("Invalid input.")
-    await asyncio.sleep(5)
-    await Message.delete(message)
-    inpvalid = False
-  if inpvalid == True:
-    if typ.lower() == "a":
+#   if len(args) != 0:
+#     typ = args[0]
+#     if len(args) >1:
+#       for i in args[0:]:
+#         inp += i
+#     elif typ.lower() != "l":
+#       await cxt.send("Invalid input.")
+#       inpvalid = False
+#   elif typ.lower() != "l":
+#     await cxt.send("Invalid input.")
+#     inpvalid = False
+#   if inpvalid == True:
+#     if typ.lower() == "a":
 
-      sresult = searchr(inp,1)
+#       sresult = searchr(inp,1)
 
-      f = open("queue.txt","a")
-      f.write(f"{sresult[0][0]}\n")
-      f.close
+#       f = open("queue.txt","a")
+#       f.write(f"{sresult[0][0]}\n")
+#       f.close
 
-    elif typ.lower() == "r":
-      with open("queue.txt", "r") as f:
-        lines = f.readlines()
-      with open("queue.txt", "w") as f:
-        for line in lines:
-          if line.strip("\n") != inp:
-            f.write(line)
-    elif typ.lower() == "p":
-      f = open("queue.txt","r")
-      qlen = len(f.readlines())
-      if qlen != 0:
-        while tru1:
-          num1 += 1
-          name1 = (f.readlines())[num1].strip("\n")
-          if qlen == num1:
-            tru1 =  False
-          url1 = (searchr(name1,1))[1]
-          path = downloader(url1)
-          playa(cxt,path)
-          asyncio.sleep((((int(searchr[2])[0])*60)+((int(searchr[2])[2:])))+1)
+#     elif typ.lower() == "r":
+#       with open("queue.txt", "r") as f:
+#         lines = f.readlines()
+#       with open("queue.txt", "w") as f:
+#         for line in lines:
+#           if line.strip("\n") != inp:
+#             f.write(line)
+#     elif typ.lower() == "p":
+#       f = open("queue.txt","r")
+#       qlen = len(f.readlines())
+#       if qlen != 0:
+#         while tru1:
+#           num1 += 1
+#           name1 = (f.readlines())[num1].strip("\n")
+#           if qlen == num1:
+#             tru1 =  False
+#           url1 = (searchr(name1,1))[1]
+#           path = downloader(url1)
+#           playa(cxt,path)
+#           asyncio.sleep((((int(searchr[2])[0])*60)+((int(searchr[2])[2:])))+1)
 
 
 
-      else:
-        message = await cxt.send("Queue is empty.")
-      await asyncio.sleep(5)
-      await Message.delete(message)
+#       else:
+#         await cxt.send("Queue is empty.")
 
-    elif typ.lower() == "l":
-      f=open("queue.txt")
-      sendstr = "Current Queue:\n"
-      for i in f.readlines().strip("\n"):
-        qnum += 1
-        sendstr += f"{qnum}. {i}\n"
-      cxt.send(sendstr)
+#     elif typ.lower() == "l":
+#       f=open("queue.txt")
+#       sendstr = "Current Queue:\n"
+#       for i in f.readlines().strip("\n"):
+#         qnum += 1
+#         sendstr += f"{qnum}. {i}\n"
+#       cxt.send(sendstr)
 
-    else:
-      message = await cxt.send("Invalid input.")
-      await asyncio.sleep(5)
-      await Message.delete(message)
+#     else:
+#       await cxt.send("Invalid input.")
 
 
 
 @bot.command(name="join",help="Joins a vc. Usage: -join  Example: -join (use while in vc)")
 async def join(ctx):
-    channel = ctx.author.voice.channel
-    await channel.connect()
+    channel = ctx.message.author.voice.channel
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+
 @bot.command(name="leave",help="Leaves a vc. Usage: -leave  Example: -leave (use while in vc)")
 async def leave(ctx):
     await ctx.voice_client.disconnect()
 
-  
+@bot.command(name="resume",help="Resumes playig whatever it was before.")
+async def resume(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if not voice.is_playing():
+        voice.resume()
+
+
+@bot.command()
+async def pause(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice.is_playing():
+        voice.pause()
+
+
+@bot.command()
+async def stop(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice.is_playing():
+        voice.stop()  
+
+
+
+
     
   
 
 
 
-#noice
+#portions of this bot were made using code from here: https://github.com/eric-yeung/Discord-Bot/blob/master/main.py
   
 bot.run(TOKEN) 
