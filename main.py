@@ -29,7 +29,7 @@ async def on_ready():
     )
   await change_status()
 
-status = itertools.cycle(['Music coming soon!','Status cycling!','online 24/7!'])
+status = itertools.cycle(['Music is here!',"Music is here!!!"])
 #hello
 @tasks.loop(seconds=20)
 async def change_status():
