@@ -153,78 +153,6 @@ async def search(cxt,*args):
       
 
 
-  
-# @bot.command(name="queue",help="Adds, removes, and plays songs in a queue. P stands for play, which plays the queue from the start, A stands for add, L stands for list.  Usage: -queue (p, a, r) (song name if applicable)  Example: -queue a NCS Candyland")
-# async def queue(cxt,*args):
-#   inpvalid = True
-#   inp = ""
-#   sresult = []
-#   name1 = ""
-#   url1 = ""
-#   num1 = 0
-#   qlen = 0
-#   tru1 = True
-#   sendstr = ""
-#   qnum = 0
-
-#   if len(args) != 0:
-#     typ = args[0]
-#     if len(args) >1:
-#       for i in args[0:]:
-#         inp += i
-#     elif typ.lower() != "l":
-#       await cxt.send("Invalid input.")
-#       inpvalid = False
-#   elif typ.lower() != "l":
-#     await cxt.send("Invalid input.")
-#     inpvalid = False
-#   if inpvalid == True:
-#     if typ.lower() == "a":
-
-#       sresult = searchr(inp,1)
-
-#       f = open("queue.txt","a")
-#       f.write(f"{sresult[0][0]}\n")
-#       f.close
-
-#     elif typ.lower() == "r":
-#       with open("queue.txt", "r") as f:
-#         lines = f.readlines()
-#       with open("queue.txt", "w") as f:
-#         for line in lines:
-#           if line.strip("\n") != inp:
-#             f.write(line)
-#     elif typ.lower() == "p":
-#       f = open("queue.txt","r")
-#       qlen = len(f.readlines())
-#       if qlen != 0:
-#         while tru1:
-#           num1 += 1
-#           name1 = (f.readlines())[num1].strip("\n")
-#           if qlen == num1:
-#             tru1 =  False
-#           url1 = (searchr(name1,1))[1]
-#           path = downloader(url1)
-#           playa(cxt,path)
-#           asyncio.sleep((((int(searchr[2])[0])*60)+((int(searchr[2])[2:])))+1)
-
-
-
-#       else:
-#         await cxt.send("Queue is empty.")
-
-#     elif typ.lower() == "l":
-#       f=open("queue.txt")
-#       sendstr = "Current Queue:\n"
-#       for i in f.readlines().strip("\n"):
-#         qnum += 1
-#         sendstr += f"{qnum}. {i}\n"
-#       cxt.send(sendstr)
-
-#     else:
-#       await cxt.send("Invalid input.")
-
-
 
 @bot.command(name="join",help="Joins a vc. Usage: -join  Example: -join (use while in vc)")
 async def join(ctx):
@@ -262,14 +190,64 @@ async def stop(ctx):
     if voice.is_playing():
         voice.stop()  
 
-
-
-
-    #hey
   
+
+@bot.command(name="url")
+async def pburl(ctx,url):
+  playa(ctx,url)
+
+
+@bot.command(name="queue",help="usage: -queue (play, reset, url, name) input")
+async def queue(cxt,*args):
+
+  plyinp = ""
+  inpvalid = True
+  result = []
+  voice_client = get(cxt.bot.voice_clients, guild=cxt.guild)
+  
+  if len(args) != 0:
+    for i in args:
+      plyinp += i
+  else:
+    await cxt.send("Invalid input.")
+    inpvalid = False
+
+  if inpvalid == True:
+
+    if args[0] == "url":
+      f = open("queue.txt","a")
+      f.write(args[1])
+      f.close()
+    elif args[0] == "reset":
+      open('file.txt', 'w').close()
+    elif args[0] == "name":
+      result = searchr(plyinp,1)
+      vidurl = result[0][1]
+      f = open("queue.txt","a")
+      f.write(vidurl)
+      f.close()
+    elif args[0] == "play":
+      f = open("queue.txt","r")
+      qtxt = f.read().strip().split()
+      f.close()
+      for i in qtxt:
+        playa(cxt,i)
+        n = 0
+        while n == 0:
+          if voice_client.is_playing() == False:
+            n = 1
+            with open("queue.txt", "w") as f:
+              for line in qtxt:
+                  if line.strip("\n") != qtxt[i]:
+                      f.write(line)
+
 
 
 
 #portions of this bot were made using code from here: https://github.com/eric-yeung/Discord-Bot/blob/master/main.py
+#with help from https://stackoverflow.com
+#and https://realpython.org,
+#https://discordpy.readthedocs.io,
+#and https://google.com
   
 bot.run(TOKEN) 
