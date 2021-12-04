@@ -30,7 +30,7 @@ async def on_ready():
   await change_status()
 
 status = itertools.cycle(['Music coming soon!','Status cycling!','online 24/7!'])
-
+#hello
 @tasks.loop(seconds=20)
 async def change_status():
   await bot.change_presence(activity=discord.Game(next(status)))
