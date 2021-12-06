@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord.ext import tasks
 import discord
+from itertools import cycle
 import os
 from dotenv import load_dotenv
 import asyncio
@@ -30,12 +31,13 @@ async def on_ready():
     f'{bot.user} is connected to the following guild(s):\n'
     f'{guild.name}(id: {guild.id})'
     )
-  await change_status()
+  change_status.start()
+  
+status = cycle(['Music is here!','More features soon!'])
 
-@tasks.loop(seconds=20)
+@tasks.loop(seconds=10)
 async def change_status():
-  await bot.change_presence(activity=discord.Game(random.choice(["Music is here!","More music features soon!"])))
-  print("t.loop notif")
+  await bot.change_presence(activity=discord.Game(next(status)))
 
 async def playa(ctx,url):
   YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
