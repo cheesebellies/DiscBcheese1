@@ -166,7 +166,7 @@ async def search(cxt,*args):
 @bot.command(name="join",help="Joins a vc. Usage: -join  Example: -join (use while in vc)")
 async def join(ctx):
     channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    voice = get((bot.voice_clients, guild=ctx.guild))
     if voice and voice.is_connected():
         await voice.move_to(channel)
     else:
@@ -178,7 +178,7 @@ async def leave(ctx):
 
 @bot.command(name="resume",help="Resumes playig whatever it was before.")
 async def resume(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    voice = get((bot.voice_clients, guild=ctx.guild))
 
     if not voice.is_playing():
         voice.resume()
@@ -186,7 +186,7 @@ async def resume(ctx):
 
 @bot.command()
 async def pause(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    voice = get((bot.voice_clients, guild=ctx.guild))
 
     if voice.is_playing():
         voice.pause()
@@ -194,7 +194,7 @@ async def pause(ctx):
 
 @bot.command()
 async def stop(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    voice = get((bot.voice_clients, guild=ctx.guild))
 
     if voice.is_playing():
         voice.stop()  
