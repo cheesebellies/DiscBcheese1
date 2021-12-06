@@ -15,7 +15,7 @@ from youtube_dl import YoutubeDL
 import random
 
 
-#make it so @tasks.loop(5) it checks to see if a global list has any items and if its currently playing, and plays it from the list. -play deletes all then adds one, -queue adds to the end.
+#make it so @tasks.loop(seconds=1) it checks to see if a global list has any items and if its currently playing, and plays it from the list. -play deletes all then adds one, -queue adds to the end.
 
 
 
@@ -35,6 +35,7 @@ async def on_ready():
 @tasks.loop(seconds=20)
 async def change_status():
   await bot.change_presence(activity=discord.Game(random.choice(["Music is here!","More music features soon!"])))
+  print("t.loop notif")
 
 async def playa(ctx,url):
   YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
