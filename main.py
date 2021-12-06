@@ -34,7 +34,7 @@ async def on_ready():
 
 @tasks.loop(seconds=20)
 async def change_status():
-  await bot.change_presence(activity=discord.Game(random.choice(["Music is here!","More music features soon!"]))
+  await bot.change_presence(activity=discord.Game(random.choice(["Music is here!","More music features soon!"])))
 
 async def playa(ctx,url):
   YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
