@@ -3,7 +3,6 @@ from discord.ext import tasks
 import discord
 import os
 from dotenv import load_dotenv
-import itertools
 import asyncio
 import pafy
 from ytsearch import searchr
@@ -13,6 +12,7 @@ from discord.utils import get
 from discord import FFmpegPCMAudio
 from discord import TextChannel
 from youtube_dl import YoutubeDL
+import random
 
 
 #make it so @tasks.loop(5) it checks to see if a global list has any items and if its currently playing, and plays it from the list. -play deletes all then adds one, -queue adds to the end.
@@ -32,19 +32,9 @@ async def on_ready():
     )
   await change_status()
 
-status = itertools.cycle(['Music is here!',"Music is here!!!"])
-#hello
 @tasks.loop(seconds=20)
 async def change_status():
-  await bot.change_presence(activity=discord.Game(next(status)))
-@tasks.loop(seconds=10800)
-async def dchekr():
-  fszs = 0
-  for filename in os.listdir("/home/runner/discb2/audio/"):
-    fszs += os.path.getsize(filename)
-  if fszs > 1073741824:
-    deleter()
-
+  await bot.change_presence(activity=discord.Game(random.choice(["Music is here!","More music features soon!"]))
 
 async def playa(ctx,url):
   YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
