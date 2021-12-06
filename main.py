@@ -15,6 +15,9 @@ from discord import TextChannel
 from youtube_dl import YoutubeDL
 
 
+#make it so @tasks.loop(5) it checks to see if a global list has any items and if its currently playing, and plays it from the list. -play deletes all then adds one, -queue adds to the end.
+
+
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
