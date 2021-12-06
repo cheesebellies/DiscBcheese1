@@ -5,15 +5,12 @@ from itertools import cycle
 import os
 from dotenv import load_dotenv
 import asyncio
-import pafy
 from ytsearch import searchr
-from ytdl import downloader
-from ytdl import deleter
 from discord.utils import get
 from discord import FFmpegPCMAudio
-from discord import TextChannel
 from youtube_dl import YoutubeDL
-import random
+
+list_to_play = []
 
 
 #make it so @tasks.loop(seconds=1) it checks to see if a global list has any items and if its currently playing, and plays it from the list. -play deletes all then adds one, -queue adds to the end.
@@ -32,6 +29,7 @@ async def on_ready():
     f'{guild.name}(id: {guild.id})'
     )
   change_status.start()
+  play_the_list.start()
   
 status = cycle(['Music is here!','More features soon!'])
 
@@ -39,23 +37,37 @@ status = cycle(['Music is here!','More features soon!'])
 async def change_status():
   await bot.change_presence(activity=discord.Game(next(status)))
 
-async def playa(ctx,url):
-  YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
-  FFMPEG_OPTIONS = {
-        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+async def playa(url):
+    YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':   'True'}
+    FFMPEG_OPTIONS = {
+          'before_options': '-reconnect 1   -reconnect_streamed 1 -reconnect_delay_max 5',  'options': '-vn'}
 
-  voice = get(bot.voice_clients, guild=ctx.guild)
-  with YoutubeDL(YDL_OPTIONS) as ydl:
-        info = ydl.extract_info(url, download=False)
-        URL = info['url']
-        voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-        voice.is_playing()
+    voice = get(bot.voice_clients, bot.get_guild(782024223311790100))
+    with YoutubeDL(YDL_OPTIONS) as ydl:
+          info = ydl.extract_info(url, download=False)
+          URL = info['url']
+          voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+          voice.is_playing()
 
 
+
+@tasks.loop(seconds=3)
+async def play_the_list():
+  global list_to_play
+  voice = get(bot.voice_clients, bot.get_guild(782024223311790100))
+
+  if voice.is_playing() == False:
+
+    await playa(list_to_play[0])
+
+    if len(list_to_play) != 0:
+      playa(list_to_play[0])
+      del list_to_play[0]
 
 
 @bot.command(name="play",help="Plays the first Youtube result from the input you give. Usage:   -play [search here]   Example:   -play Never Gonna Give You Up",aliases=["p"])
 async def play(cxt,*args):
+  global list_to_play
   plyinp = ""
   inpvalid = True
   result = []
@@ -87,15 +99,16 @@ async def play(cxt,*args):
       else:
         if replacemessage.contents.lower() == "y":
           await stop()
-          await playa(cxt,vidurl)
+          list_to_play = [vidurl]
     else:
-      await playa(cxt,vidurl)
+      list_to_play = [vidurl]
       
       
   
 
 @bot.command(name="search",help="Gets the top ten results for your search. Usage: -search [search here]  Example: -search Crab Rave",aliases=["s"])
 async def search(cxt,*args):
+  global list_to_play
   plyinp = ""
   inpvalid = True
   sresult = []
@@ -116,7 +129,6 @@ async def search(cxt,*args):
       sendstrint += 1
       sendstr += f"{sendstrint}.  {i[0]}\n"
     sendstr += "\nChoose one to continue:"
-    message = cxt.send(sendstr)
 
     def check(msg):
       return msg.author == cxt.author and msg.channel == cxt.channel and ("1" in msg.content or "2" in msg.content or "3" in msg.content or "4" in msg.content or "5" in msg.content or "6" in msg.content or "7" in msg.content or "8" in msg.content or "9" in msg.content or "10" in msg.content)
@@ -143,9 +155,9 @@ async def search(cxt,*args):
       else:
         if replacemessage.contents.lower() == "y":
           await stop()
-          await playa(cxt,vidurl)
+          list_to_play = [vidurl]
     else:
-      await playa(cxt,vidurl)
+      list_to_play = [vidurl]
       
 
 
@@ -190,17 +202,17 @@ async def stop(ctx):
 
 @bot.command(name="url")
 async def pburl(ctx,url):
-  playa(ctx,url)
+  global list_to_play
+  list_to_play = [url]
 
 
-@bot.command(name="queue",help="usage: -queue (play, reset, url, name) input")
+@bot.command(name="queue",help="usage: -queue")
 async def queue(cxt,*args):
-
+  global list_to_play
   plyinp = ""
   inpvalid = True
   result = []
-  voice_client = get(cxt.bot.voice_clients, guild=cxt.guild)
-  
+
   if len(args) != 0:
     for i in args:
       plyinp += i
@@ -210,33 +222,17 @@ async def queue(cxt,*args):
 
   if inpvalid == True:
 
-    if args[0] == "url":
-      f = open("queue.txt","a")
-      f.write(args[1])
-      f.close()
-    elif args[0] == "reset":
-      open('file.txt', 'w').close()
-    elif args[0] == "name":
-      result = searchr(plyinp,1)
-      vidurl = result[0][1]
-      f = open("queue.txt","a")
-      f.write(vidurl)
-      f.close()
-    elif args[0] == "play":
-      f = open("queue.txt","r")
-      qtxt = f.read().strip().split()
-      f.close()
-      for i in qtxt:
-        playa(cxt,i)
-        n = 0
-        while n == 0:
-          if voice_client.is_playing() == False:
-            n = 1
-            with open("queue.txt", "w") as f:
-              for line in qtxt:
-                  if line.strip("\n") != qtxt[i]:
-                      f.write(line)
+    if len(args) != 0:
 
+      if args[0] == "name":
+        result = searchr(plyinp,1)
+        vidurl = result[0][1]
+        list_to_play.append(vidurl)
+      elif args[0] == "url":
+        vidurl = args[1]
+        list_to_play.append(vidurl)
+      elif args[0] == "clear":
+        list_to_play = list_to_play[1:]
 
 
 
