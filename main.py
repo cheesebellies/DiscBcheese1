@@ -42,7 +42,8 @@ async def playa(url):
     FFMPEG_OPTIONS = {
           'before_options': '-reconnect 1   -reconnect_streamed 1 -reconnect_delay_max 5',  'options': '-vn'}
 
-    voice = get(bot.voice_clients, bot.get_guild(782024223311790100))
+    vguild = bot.get_guild(782024223311790100)
+    voice = get(bot.voice_clients, vguild)
     with YoutubeDL(YDL_OPTIONS) as ydl:
           info = ydl.extract_info(url, download=False)
           URL = info['url']
@@ -54,8 +55,8 @@ async def playa(url):
 @tasks.loop(seconds=3)
 async def play_the_list():
   global list_to_play
-  voice = get(bot.voice_clients, bot.get_guild(782024223311790100))
-
+  vguild = bot.get_guild(782024223311790100)
+  voice = get(bot.voice_clients, vguild)
   if voice.is_playing() == False:
 
     await playa(list_to_play[0])
@@ -71,8 +72,8 @@ async def play(cxt,*args):
   plyinp = ""
   inpvalid = True
   result = []
-  voice_client = get(cxt.bot.voice_clients, guild=cxt.guild)
-  
+  vguild = bot.get_guild(782024223311790100)
+  voice_client = get(bot.voice_clients, vguild)  
   if len(args) != 0:
     for i in args:
       plyinp += i
@@ -114,8 +115,8 @@ async def search(cxt,*args):
   sresult = []
   sendstr = ""
   sendstrint = 0
-  voice_client = get(cxt.bot.voice_clients, guild=cxt.guild)
-
+  vguild = bot.get_guild(782024223311790100)
+  voice_client = get(bot.voice_clients, vguild)
   if len(args) != 0:
     for i in args:
       plyinp += i
