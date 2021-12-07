@@ -254,5 +254,6 @@ async def queue(ctx,*args):
 #and https://realpython.org,
 #https://discordpy.readthedocs.io,
 #and https://google.com
+#and likely others.
   
 bot.run(TOKEN) 
