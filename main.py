@@ -71,7 +71,7 @@ async def play(cxt,*args):
   inpvalid = True
   result = []
   
-  client = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))  
+  voice_client = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))  
   if len(args) != 0:
     for i in args:
       plyinp += i
@@ -105,58 +105,58 @@ async def play(cxt,*args):
       
   
 
-@bot.command(name="search",help="Gets the top ten results for your search. Usage: -search [search here]  Example: -search Crab Rave",aliases=["s"])
-async def search(cxt,*args):
-  global list_to_play
-  plyinp = ""
-  inpvalid = True
-  sresult = []
-  sendstr = ""
-  sendstrint = 0
+# @bot.command(name="search",help="Gets the top ten results for your search. Usage: -search [search here]  Example: -search Crab Rave",aliases=["s"])
+# async def search(cxt,*args):
+#   global list_to_play
+#   plyinp = ""
+#   inpvalid = True
+#   sresult = []
+#   sendstr = ""
+#   sendstrint = 0
   
-  voice = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
-  if len(args) != 0:
-    for i in args:
-      plyinp += i
-  else:
-    await cxt.send("Invalid input.")
-    inpvalid = False
-  if inpvalid == True:
-    sendstr = f"Top results for {plyinp}:\n"
-    sresult = searchr(plyinp,10)
-    for i in sresult:
-      sendstrint += 1
-      sendstr += f"{sendstrint}.  {i[0]}\n"
-    sendstr += "\nChoose one to continue:"
+#   voice_client = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
+#   if len(args) != 0:
+#     for i in args:
+#       plyinp += i
+#   else:
+#     await cxt.send("Invalid input.")
+#     inpvalid = False
+#   if inpvalid == True:
+#     sendstr = f"Top results for {plyinp}:\n"
+#     sresult = searchr(plyinp,10)
+#     for i in sresult:
+#       sendstrint += 1
+#       sendstr += f"{sendstrint}.  {i[0]}\n"
+#     sendstr += "\nChoose one to continue:"
 
-    def check(msg):
-      return msg.author == cxt.author and msg.channel == cxt.channel and ("1" in msg.content or "2" in msg.content or "3" in msg.content or "4" in msg.content or "5" in msg.content or "6" in msg.content or "7" in msg.content or "8" in msg.content or "9" in msg.content or "10" in msg.content)
+#     def check(msg):
+#       return msg.author == cxt.author and msg.channel == cxt.channel and ("1" in msg.content or "2" in msg.content or "3" in msg.content or "4" in msg.content or "5" in msg.content or "6" in msg.content or "7" in msg.content or "8" in msg.content or "9" in msg.content or "10" in msg.content)
 
-    try:
-      nmessage = await bot.wait_for("message", check=check, timeout=20)
-    except asyncio.TimeoutError:
-      await cxt.send("Timed out.")
-    else:
+#     try:
+#       nmessage = await bot.wait_for("message", check=check, timeout=20)
+#     except asyncio.TimeoutError:
+#       await cxt.send("Timed out.")
+#     else:
 
-      vidurl = (sresult[int(nmessage.content)-1])[1]
+#       vidurl = (sresult[int(nmessage.content)-1])[1]
 
 
-    if voice_client.is_playing() == True:
-      await cxt.send("Video already playing. Replace? y/n")
+#     if voice_client.is_playing() == True:
+#       await cxt.send("Video already playing. Replace? y/n")
       
-      def check(msg):
-        return msg.author == cxt.author and msg.channel == cxt.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
+#       def check(msg):
+#         return msg.author == cxt.author and msg.channel == cxt.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
 
-      try:
-        replacemessage = await bot.wait_for("message", check=check, timeout=20)
-      except asyncio.TimeoutError:
-        await cxt.send("Timed out.")
-      else:
-        if replacemessage.contents.lower() == "y":
-          await stop()
-          list_to_play = [vidurl]
-    else:
-      list_to_play = [vidurl]
+#       try:
+#         replacemessage = await bot.wait_for("message", check=check, timeout=20)
+#       except asyncio.TimeoutError:
+#         await cxt.send("Timed out.")
+#       else:
+#         if replacemessage.contents.lower() == "y":
+#           await stop()
+#           list_to_play = [vidurl]
+#     else:
+#       list_to_play = [vidurl]
       
 
 
