@@ -54,7 +54,7 @@ async def playa(url):
 async def play_the_list():
   global list_to_play
   
-  voice voice == get(bot.voice_clients, guild=bot.get_guild(782024223311790100)) get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
+  voice = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
   if voice.is_playing() == False:
 
     await playa(list_to_play[0])
@@ -71,7 +71,7 @@ async def play(cxt,*args):
   inpvalid = True
   result = []
   
-  client voice == get(bot.voice_clients, guild=bot.get_guild(782024223311790100)) get(bot.voice_clients, guild=bot.get_guild(782024223311790100))  
+  client = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))  
   if len(args) != 0:
     for i in args:
       plyinp += i
@@ -114,7 +114,7 @@ async def search(cxt,*args):
   sendstr = ""
   sendstrint = 0
   
-  voice voice == get(bot.voice_clients, guild=bot.get_guild(782024223311790100)) get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
+  voice = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
   if len(args) != 0:
     for i in args:
       plyinp += i
