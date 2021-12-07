@@ -11,6 +11,7 @@ from discord import FFmpegPCMAudio
 from youtube_dl import YoutubeDL
 
 list_to_play = []
+paused = False
 
 
 #make it so @tasks.loop(seconds=1) it checks to see if a global list has any items and if its currently playing, and plays it from the list. -play deletes all then adds one, -queue adds to the end.
@@ -53,20 +54,19 @@ async def playa(ctx,url):
 @tasks.loop(seconds=3)
 async def play_the_list():
   global list_to_play
-
-  try:
-    ctx = list_to_play[0][1]
   
-    voice = get(bot.voice_clients, guild=ctx.guild)
-    if voice.is_playing() == False:
+  if paused == False:
+    try:
+      ctx = list_to_play[0][1]
 
-      await playa(list_to_play[0][1],list_to_play[0][0])
+      voice = get(bot.voice_clients, guild=ctx.guild)
+      if voice.is_playing() == False:
 
-      if len(list_to_play) != 0:
-        playa(list_to_play[0])
-        del list_to_play[0]
-  except:
-    pass
+        if len(list_to_play) != 0:
+          await playa(list_to_play[0][1],list_to_play[0][0])
+          del list_to_play[0]
+    except:
+      pass
 
 
 @bot.command(name="play",help="Plays the first Youtube result from the input you give. Usage:   -play [search here]   Example:   -play Never Gonna Give You Up",aliases=["p"])
@@ -177,37 +177,46 @@ async def join(ctx):
 
 @bot.command(name="leave",help="Leaves a vc. Usage: -leave  Example: -leave (use while in vc)")
 async def leave(ctx):
+    global list_to_play
     await ctx.voice_client.disconnect()
+    list_to_play = []
 
 @bot.command(name="resume",help="Resumes playig whatever it was before.")
 async def resume(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
+    global paused
 
     if not voice.is_playing():
         voice.resume()
+        paused = False
 
 
 @bot.command()
 async def pause(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
+    global paused
 
     if voice.is_playing():
         voice.pause()
+        paused = True
+        
 
 
 @bot.command()
 async def stop(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
-
+    global list_to_play
+    
     if voice.is_playing():
         voice.stop()  
+        list_to_play = []
 
   
 
 @bot.command(name="url")
 async def pburl(ctx,url):
   global list_to_play
-  list_to_play = [url]
+  list_to_play = [[url,ctx]]
 
 
 @bot.command(name="queue",help="usage: -queue")
@@ -236,7 +245,7 @@ async def queue(ctx,*args):
         vidurl = args[1]
         list_to_play.append([vidurl, ctx])
       elif args[0] == "clear":
-        list_to_play = list_to_play[1:]
+        list_to_play = []
 
 
 
