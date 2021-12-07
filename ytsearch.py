@@ -9,4 +9,4 @@ def searchr(inpt,amnt):
 
   for i in vsr.get("result"):
     returnr.append([i.get("title"),i.get("link"),i.get("duration")])
-    return returnr
+   return returnr
