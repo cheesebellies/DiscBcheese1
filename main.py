@@ -37,12 +37,12 @@ status = cycle(['Music is here!','More features soon!'])
 async def change_status():
   await bot.change_presence(activity=discord.Game(next(status)))
 
-async def playa(url):
+async def playa(ctx,url):
     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':   'True'}
     FFMPEG_OPTIONS = {
           'before_options': '-reconnect 1   -reconnect_streamed 1 -reconnect_delay_max 5',  'options': '-vn'}
 
-    voice = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
+    voice = get(bot.voice_clients, guild=ctx.guild)
     with YoutubeDL(YDL_OPTIONS) as ydl:
           info = ydl.extract_info(url, download=False)
           URL = info['url']
@@ -53,11 +53,13 @@ async def playa(url):
 @tasks.loop(seconds=3)
 async def play_the_list():
   global list_to_play
+
+  ctx = list_to_play[0][1]
   
-  voice = get(bot.voice_clients, guild=bot.get_guild(782024223311790100))
+  voice = get(bot.voice_clients, guild=ctx.guild)
   if voice.is_playing() == False:
 
-    await playa(list_to_play[0])
+    await playa(list_to_play[0][1],list_to_play[0][0])
 
     if len(list_to_play) != 0:
       playa(list_to_play[0])
@@ -65,7 +67,7 @@ async def play_the_list():
 
 
 @bot.command(name="play",help="Plays the first Youtube result from the input you give. Usage:   -play [search here]   Example:   -play Never Gonna Give You Up",aliases=["p"])
-async def play(cxt,*args):
+async def play(ctx,*args):
   global list_to_play
   plyinp = ""
   inpvalid = True
@@ -76,7 +78,7 @@ async def play(cxt,*args):
     for i in args:
       plyinp += i
   else:
-    await cxt.send("Invalid input.")
+    await ctx.send("Invalid input.")
     inpvalid = False
   
   if inpvalid == True:
@@ -86,27 +88,27 @@ async def play(cxt,*args):
 
 
     if voice_client.is_playing() == True:
-      await cxt.send("Video already playing. Replace? y/n")
+      await ctx.send("Video already playing. Replace? y/n")
       
       def check(msg):
-        return msg.author == cxt.author and msg.channel == cxt.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
+        return msg.author == ctx.author and msg.channel == ctx.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
 
       try:
         replacemessage = await bot.wait_for("message", check=check, timeout=20)
       except asyncio.TimeoutError:
-        await cxt.send("Timed out.")
+        await ctx.send("Timed out.")
       else:
         if replacemessage.contents.lower() == "y":
           await stop()
-          list_to_play = [vidurl]
+          list_to_play = [[vidurl,ctx]]
     else:
-      list_to_play = [vidurl]
+      list_to_play = [[vidurl, ctx]]
       
       
   
 
 # @bot.command(name="search",help="Gets the top ten results for your search. Usage: -search [search here]  Example: -search Crab Rave",aliases=["s"])
-# async def search(cxt,*args):
+# async def search(ctx,*args):
 #   global list_to_play
 #   plyinp = ""
 #   inpvalid = True
@@ -119,7 +121,7 @@ async def play(cxt,*args):
 #     for i in args:
 #       plyinp += i
 #   else:
-#     await cxt.send("Invalid input.")
+#     await ctx.send("Invalid input.")
 #     inpvalid = False
 #   if inpvalid == True:
 #     sendstr = f"Top results for {plyinp}:\n"
@@ -130,27 +132,27 @@ async def play(cxt,*args):
 #     sendstr += "\nChoose one to continue:"
 
 #     def check(msg):
-#       return msg.author == cxt.author and msg.channel == cxt.channel and ("1" in msg.content or "2" in msg.content or "3" in msg.content or "4" in msg.content or "5" in msg.content or "6" in msg.content or "7" in msg.content or "8" in msg.content or "9" in msg.content or "10" in msg.content)
+#       return msg.author == ctx.author and msg.channel == ctx.channel and ("1" in msg.content or "2" in msg.content or "3" in msg.content or "4" in msg.content or "5" in msg.content or "6" in msg.content or "7" in msg.content or "8" in msg.content or "9" in msg.content or "10" in msg.content)
 
 #     try:
 #       nmessage = await bot.wait_for("message", check=check, timeout=20)
 #     except asyncio.TimeoutError:
-#       await cxt.send("Timed out.")
+#       await ctx.send("Timed out.")
 #     else:
 
 #       vidurl = (sresult[int(nmessage.content)-1])[1]
 
 
 #     if voice_client.is_playing() == True:
-#       await cxt.send("Video already playing. Replace? y/n")
+#       await ctx.send("Video already playing. Replace? y/n")
       
 #       def check(msg):
-#         return msg.author == cxt.author and msg.channel == cxt.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
+#         return msg.author == ctx.author and msg.channel == ctx.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
 
 #       try:
 #         replacemessage = await bot.wait_for("message", check=check, timeout=20)
 #       except asyncio.TimeoutError:
-#         await cxt.send("Timed out.")
+#         await ctx.send("Timed out.")
 #       else:
 #         if replacemessage.contents.lower() == "y":
 #           await stop()
@@ -206,7 +208,7 @@ async def pburl(ctx,url):
 
 
 @bot.command(name="queue",help="usage: -queue")
-async def queue(cxt,*args):
+async def queue(ctx,*args):
   global list_to_play
   plyinp = ""
   inpvalid = True
@@ -216,7 +218,7 @@ async def queue(cxt,*args):
     for i in args:
       plyinp += i
   else:
-    await cxt.send("Invalid input.")
+    await ctx.send("Invalid input.")
     inpvalid = False
 
   if inpvalid == True:
@@ -226,10 +228,10 @@ async def queue(cxt,*args):
       if args[0] == "name":
         result = searchr(plyinp,1)
         vidurl = result[0][1]
-        list_to_play.append(vidurl)
+        list_to_play.append([vidurl, ctx])
       elif args[0] == "url":
         vidurl = args[1]
-        list_to_play.append(vidurl)
+        list_to_play.append([vidurl, ctx])
       elif args[0] == "clear":
         list_to_play = list_to_play[1:]
 
