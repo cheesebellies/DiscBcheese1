@@ -54,16 +54,19 @@ async def playa(ctx,url):
 async def play_the_list():
   global list_to_play
 
-  ctx = list_to_play[0][1]
+  try:
+    ctx = list_to_play[0][1]
   
-  voice = get(bot.voice_clients, guild=ctx.guild)
-  if voice.is_playing() == False:
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_playing() == False:
 
-    await playa(list_to_play[0][1],list_to_play[0][0])
+      await playa(list_to_play[0][1],list_to_play[0][0])
 
-    if len(list_to_play) != 0:
-      playa(list_to_play[0])
-      del list_to_play[0]
+      if len(list_to_play) != 0:
+        playa(list_to_play[0])
+        del list_to_play[0]
+  except:
+    pass
 
 
 @bot.command(name="play",help="Plays the first Youtube result from the input you give. Usage:   -play [search here]   Example:   -play Never Gonna Give You Up",aliases=["p"])
