@@ -13,11 +13,6 @@ from youtube_dl import YoutubeDL
 list_to_play = []
 paused = False
 
-
-#make it so @tasks.loop(seconds=1) it checks to see if a global list has any items and if its currently playing, and plays it from the list. -play deletes all then adds one, -queue adds to the end.
-
-
-
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
@@ -250,22 +245,10 @@ async def queue(ctx,*args):
 
 #play live vidoes
 
-#play yt playlists from url(if works)
+#play yt playlists from url(if it works)
 
 #make the gui look better
 
 
 
-
-
-
-
-
-#portions of this bot were made using code from here: https://github.com/eric-yeung/Discord-Bot/blob/master/main.py
-#with help from https://stackoverflow.com
-#and https://realpython.org,
-#https://discordpy.readthedocs.io,
-#and https://google.com
-#and likely others
-  
 bot.run(TOKEN) 
