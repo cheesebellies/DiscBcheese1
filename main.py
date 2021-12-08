@@ -133,6 +133,8 @@ async def search(ctx,*args):
       
     list_to_play = [[vidurl,ctx]]
       
+      
+      
 
 
 
@@ -195,6 +197,9 @@ async def queue(ctx,*args):
   plyinp = ""
   inpvalid = True
   result = []
+  sresult = []
+  sendstr = ""
+  sendstrint = 0
 
   if len(args) != 0:
     for i in args:
@@ -216,6 +221,29 @@ async def queue(ctx,*args):
         list_to_play.append([vidurl, ctx])
       elif args[0] == "clear":
         list_to_play = []
+      elif args[0] == "search":
+        sendstr = f"Top results for {plyinp}:\n"
+        sresult = searchr(plyinp,10)
+        for i in sresult:
+          sendstrint += 1
+          sendstr += f"{sendstrint}.  {i[0]}\n"
+        sendstr += "\nChoose one to continue:"
+
+        def check(msg):
+          return msg.author == ctx.author and msg.channel == ctx.channel and ("1" in msg.content or "2" in msg.content or "3" in msg.content or "4" in msg.content or "5" in msg.content or "6" in msg.content or "7" in msg.content or "8" in msg.content or "9" in msg.content or "10" in msg.content)
+
+        await ctx.send(sendstr)
+
+        try:
+          nmessage = await bot.wait_for("message", check=check, timeout=20)
+        except asyncio.TimeoutError:
+          await ctx.send("Timed out.")
+        else:
+
+          vidurl = (sresult[int(nmessage.content)-1])[1]
+
+        list_to_play.append([vidurl,ctx])
+        
 
 
 #Create playlists (maybe from yt playlist, somehow search in playlists?) probably just from -playlist add (name, url).
