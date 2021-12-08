@@ -56,7 +56,7 @@ async def play_the_list():
   global list_to_play
   
   if paused == False:
-    try:
+    
       ctx = list_to_play[0][1]
 
       voice = get(bot.voice_clients, guild=ctx.guild)
@@ -65,8 +65,7 @@ async def play_the_list():
         if len(list_to_play) != 0:
           await playa(list_to_play[0][1],list_to_play[0][0])
           del list_to_play[0]
-    except:
-      pass
+    
 
 
 @bot.command(name="play",help="Plays the first Youtube result from the input you give. Usage:   -play [search here]   Example:   -play Never Gonna Give You Up",aliases=["p"])
