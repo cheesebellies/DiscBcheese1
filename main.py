@@ -245,8 +245,8 @@ async def queue(ctx,*args):
 @bot.command(name="live",help="Experimental. -live [url]")
 async def stream(self, ctx, *, url):
     async with ctx.typing():
-    player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-    ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
+      player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+      ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
         
 
 
