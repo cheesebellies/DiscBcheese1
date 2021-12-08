@@ -75,7 +75,7 @@ async def play(ctx,*args):
   voice_client = get(bot.voice_clients, guild=ctx.guild)
   if len(args) != 0:
     for i in args:
-      plyinp += i
+      plyinp += f'{i} '
   else:
     await ctx.send("Invalid input.")
     inpvalid = False
@@ -102,7 +102,7 @@ async def search(ctx,*args):
   voice_client = get(bot.voice_clients, guild=ctx.guild)
   if len(args) != 0:
     for i in args:
-      plyinp += i
+      plyinp += f'{i} '
   else:
     await ctx.send("Invalid input.")
     inpvalid = False
@@ -199,7 +199,7 @@ async def queue(ctx,*args):
 
   if len(args) != 0:
     for i in args:
-      plyinp += i
+      plyinp += f'{i} '
   else:
     await ctx.send("Invalid input.")
     inpvalid = False
@@ -243,7 +243,7 @@ async def queue(ctx,*args):
        
       
 @bot.command(name="live",help="Experimental. -live [url]")
-async def stream(self, ctx, *, url):
+async def stream(ctx, *, url):
     async with ctx.typing():
       player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
       ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
