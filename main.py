@@ -9,6 +9,7 @@ from ytsearch import searchr
 from discord.utils import get
 from discord import FFmpegPCMAudio
 from youtube_dl import YoutubeDL
+import youtube_dl
 
 list_to_play = []
 paused = False
@@ -238,6 +239,14 @@ async def queue(ctx,*args):
           vidurl = (sresult[int(nmessage.content)-1])[1]
 
         list_to_play.append([vidurl,ctx])
+        
+       
+      
+@bot.command(name="live",help="Experimental. -live [url]")
+async def stream(self, ctx, *, url):
+    async with ctx.typing():
+    player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+    ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
         
 
 
