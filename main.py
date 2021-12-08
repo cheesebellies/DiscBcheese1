@@ -57,15 +57,16 @@ async def play_the_list():
   
   if paused == False:
     
-      ctx = list_to_play[0][1]
+      if len(list_to_play) != 0:
+        ctx = list_to_play[0][1]
 
-      voice = get(bot.voice_clients, guild=ctx.guild)
-      if voice.is_playing() == False:
+        voice = get(bot.voice_clients, guild=ctx.guild)
+        if voice.is_playing() == False:
 
-        if len(list_to_play) != 0:
-          await playa(list_to_play[0][1],list_to_play[0][0])
-          del list_to_play[0]
-    
+          if len(list_to_play) != 0:
+            await playa(list_to_play[0][1],list_to_play[0][0])
+            del list_to_play[0]
+
 
 
 @bot.command(name="play",help="Plays the first Youtube result from the input you give. Usage:   -play [search here]   Example:   -play Never Gonna Give You Up",aliases=["p"])
@@ -88,23 +89,7 @@ async def play(ctx,*args):
     result = searchr(plyinp,1)
     vidurl = result[0][1]
 
-
-    if voice_client.is_playing() == True:
-      await ctx.send("Video already playing. Replace? y/n")
-      
-      def check(msg):
-        return msg.author == ctx.author and msg.channel == ctx.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
-
-      try:
-        replacemessage = await bot.wait_for("message", check=check, timeout=20)
-      except asyncio.TimeoutError:
-        await ctx.send("Timed out.")
-      else:
-        if replacemessage.contents.lower() == "y":
-          await stop()
-          list_to_play = [[vidurl,ctx]]
-    else:
-      list_to_play = [[vidurl, ctx]]
+    list_to_play = [[vidurl, ctx]]
       
       
   
@@ -145,24 +130,8 @@ async def search(ctx,*args):
     else:
 
       vidurl = (sresult[int(nmessage.content)-1])[1]
-
-
-    if voice_client.is_playing() == True:
-      await ctx.send("Video already playing. Replace? y/n")
       
-      def check(msg):
-        return msg.author == ctx.author and msg.channel == ctx.channel and ("y" in msg.content.lower() or "n" in msg.content.lower())
-
-      try:
-        replacemessage = await bot.wait_for("message", check=check, timeout=20)
-      except asyncio.TimeoutError:
-        await ctx.send("Timed out.")
-      else:
-        if replacemessage.contents.lower() == "y":
-          await stop()
-          list_to_play = [vidurl]
-    else:
-      list_to_play = [vidurl]
+    list_to_play = [[vidurl,ctx]]
       
 
 
