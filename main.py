@@ -241,18 +241,11 @@ async def queue(ctx,*args):
         list_to_play.append([vidurl,ctx])
         
        
-      
-@bot.command(name="live",help="Experimental. -live [url]")
-async def stream(ctx, *, url):
-    async with ctx.typing():
-      player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-      ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
-        
 
 
 #Create playlists (maybe from yt playlist, somehow search in playlists?) probably just from -playlist add (name, url).
 
-#play live vidoes
+#play live vidoes #maybe too hard... more research needed (into ffmpeg, youtube-dl ; read the docs)
 
 #play yt playlists from url(if it works)
 
