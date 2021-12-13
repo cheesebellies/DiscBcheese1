@@ -7,4 +7,3 @@ youtube-dl
 pynacl
 bs4
 requests
-urllib
