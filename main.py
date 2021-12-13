@@ -13,7 +13,7 @@ import youtube_dl
 from bs4 import BeautifulSoup
 import requests
 import json
-import urlparse
+import urllib.parse as urlparse
 
 list_to_play = []
 paused = False
