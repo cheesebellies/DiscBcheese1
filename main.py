@@ -10,6 +10,10 @@ from discord.utils import get
 from discord import FFmpegPCMAudio
 from youtube_dl import YoutubeDL
 import youtube_dl
+from bs4 import BeautifulSoup
+import requests
+import json
+import urlparse
 
 list_to_play = []
 paused = False
@@ -63,6 +67,27 @@ async def play_the_list():
             await playa(list_to_play[0][1],list_to_play[0][0])
             del list_to_play[0]
 
+
+async def getitle(url):
+  
+    r = requests.get(url)
+    s = BeautifulSoup(r.text, "html.parser")
+    return s.find("span", class_="watch-title").text.replace("\n", "")
+
+
+async def video_id(value):
+    query = urlparse.urlparse(value)
+    if query.hostname == 'youtu.be':
+        return query.path[1:]
+    if query.hostname in ('www.youtube.com', 'youtube.com'):
+        if query.path == '/watch':
+            p = urlparse.parse_qs(query.query)
+            return p['v'][0]
+        if query.path[:7] == '/embed/':
+            return query.path.split('/')[2]
+        if query.path[:3] == '/v/':
+            return query.path.split('/')[2]
+    return None
 
 
 @bot.command(name="play",help="Plays the first Youtube result from the input you give. Usage:   -play [search here]   Example:   -play Never Gonna Give You Up",aliases=["p"])
@@ -240,17 +265,66 @@ async def queue(ctx,*args):
 
         list_to_play.append([vidurl,ctx])
         
+
+@bot.command(name="next",help="-next outputs videos in queue")
+async def qnxt(ctx):
+  global list_to_play
+  otp = ""
+
+  if len(list_to_play) != 0:
+    for i in list_to_play:
+      otp += f"1)  {await getitle(i[0])}\n"
+  else:
+    otp = "Nothing in queue."
+  await ctx.send(otp)
+
+
+
+# @bot.command(name="playlist",help="-playlist (add, search, view, remove, delete, play")
+# async def playlistopts(ctx,*args):
+#   global list_to_play
+#   plyinp = ""
+#   inpvalid = True
+#   result = []
+#   sresult = []
+#   sendstr = ""
+#   sendstrint = 0
+
+#   if len(args) != 0:
+#     for i in args:
+#       plyinp += f'{i} '
+#   else:
+#     await ctx.send("Invalid input.")
+#     inpvalid = False
+
+#   if inpvalid == True:
+
+#     if 
+
+
+'''
+embeds:
+first two tabs of the group
+'''
+
+
+@bot.command(name="embed",help="dev tool")
+async def embedr(ctx,url):
+  ttl = await getitle(url)
+  vgid = await video_id(url)
+  embed=discord.Embed(title="**Now playing:**", color=0xFF000,url=url)
+  embed.add_field(name=ttl, inline=False)
+  embed.set_thumbnail(f"https://img.youtube.com/vi/{vgid}/default.jpg")
+
+
        
 
 
 #Create playlists (maybe from yt playlist, somehow search in playlists?) probably just from -playlist add (name, url).
 
-#play live vidoes #maybe too hard... more research needed (into ffmpeg, youtube-dl ; read the docs)
+#play live vidoes... may be too hard... more research needed (into ffmpeg, youtube-dl ; read the docs)
 
-#play yt playlists from url(if it works)
-
-#make the gui look better
-
+#make the gui look better/give more responses for what its doing
 
 
 bot.run(TOKEN) 
