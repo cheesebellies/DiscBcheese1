@@ -13,7 +13,7 @@ import youtube_dl
 from bs4 import BeautifulSoup
 import requests
 import json
-import urllib.parse as urlparse
+import urllib.parse
 
 list_to_play = []
 paused = False
@@ -76,12 +76,12 @@ async def getitle(url):
 
 
 async def video_id(value):
-    query = urlparse.urlparse(value)
+    query = urllib.parse.urlparse(value)
     if query.hostname == 'youtu.be':
         return query.path[1:]
     if query.hostname in ('www.youtube.com', 'youtube.com'):
         if query.path == '/watch':
-            p = urlparse.parse_qs(query.query)
+            p = urllib.parse.parse_qs(query.query)
             return p['v'][0]
         if query.path[:7] == '/embed/':
             return query.path.split('/')[2]
