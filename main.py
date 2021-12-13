@@ -315,6 +315,7 @@ async def embedr(ctx,url):
   embed=discord.Embed(title="**Now playing:**", color=0xFF000,url=url)
   embed.add_field(name=ttl, inline=False)
   embed.set_thumbnail(f"https://img.youtube.com/vi/{vgid}/default.jpg")
+  await ctx.send(embed)
 
 
        
