@@ -5,3 +5,4 @@ pafy
 youtube-search-python
 youtube-dl
 pynacl
+bs4
