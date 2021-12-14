@@ -13,7 +13,8 @@ import youtube_dl
 from bs4 import BeautifulSoup
 import requests
 import json
-import urllib.parse
+import urlparse
+import pafy
 
 list_to_play = []
 paused = False
@@ -68,20 +69,18 @@ async def play_the_list():
             del list_to_play[0]
 
 
-async def getitle(url):
-  
-    r = requests.get(url)
-    s = BeautifulSoup(r.text, "html.parser")
-    return s.find("span", class_="watch-title").text.replace("\n", "")
+async def getitle(url):    
+  video = pafy.new(url)
+  return video.title
 
 
 async def video_id(value):
-    query = urllib.parse.urlparse(value)
+    query = urlparse.urlparse(value)
     if query.hostname == 'youtu.be':
         return query.path[1:]
     if query.hostname in ('www.youtube.com', 'youtube.com'):
         if query.path == '/watch':
-            p = urllib.parse.parse_qs(query.query)
+            p = urlparse.parse_qs(query.query)
             return p['v'][0]
         if query.path[:7] == '/embed/':
             return query.path.split('/')[2]
@@ -315,6 +314,7 @@ async def embedr(ctx,url):
   embed=discord.Embed(title="**Now playing:**", color=0xFF000,url=url)
   embed.add_field(name=ttl, inline=False)
   embed.set_thumbnail(f"https://img.youtube.com/vi/{vgid}/default.jpg")
+
   await ctx.send(embed)
 
 
