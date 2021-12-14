@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import urllib.parse
-import pafy
+import pafys
 
 list_to_play = []
 paused = False
@@ -70,7 +70,7 @@ async def play_the_list():
 
 
 async def getitle(url):    
-  video = pafy.new(url)
+  video = pafys.new(url)
   return video.title
 
 
